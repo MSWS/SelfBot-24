@@ -29,7 +29,7 @@ client.on("messageCreate", async message => {
 
 const re = /\bms\b/;
 
-function processEdmundMessage(message) {
+async function processEdmundMessage(message) {
     const msg = message.content.substring(": ed".length)
     message.delete();
     message.channel.sendTyping();
