@@ -15,14 +15,21 @@ client.on('ready', async () => {
 })
 
 client.on("messageCreate", async message => {
-    if (message.guildId === "161245089774043136") {
+    if (message.guildId === "161245089774043136")
         processEgoMessage(message);
-    }
 
     if (message.author.id != client.user.id)
         return;
-    if (!message.content.startsWith(":ed "))
+
+    if (message.content.startsWith(":ed ")) {
+        processEdmundMessage(messsage);
         return;
+    }
+});
+
+const re = /\bms\b/;
+
+function processEdmundMessage(message) {
     const msg = message.content.substring(": ed".length)
     message.delete();
     message.channel.sendTyping();
@@ -31,7 +38,7 @@ client.on("messageCreate", async message => {
         messages: [
             {
                 role: 'user',
-                content: 'Rewrite the following into a sentence in the style of a person who feels deeply envious but tries to mask it with false enthusiasm. Use overly flowery language, a hint of sarcasm, and a focus on their own perceived misfortune.'
+                content: 'Rewrite the following into a sentence in the style of a person who feels deeply envious but tries to mask it with false enthusiasm. Use overly flowery language, a hint of sarcasm, and small focus on their own perceived misfortune.'
             },
             {
                 role: 'user',
@@ -42,9 +49,7 @@ client.on("messageCreate", async message => {
     const response = chatCompletion.choices[0].message;
     console.log(response);
     message.channel.send(response);
-});
-
-const re = /\bms\b/;
+}
 
 function processEgoMessage(message) {
     if (!re.test(message.content.toLowerCase()))
