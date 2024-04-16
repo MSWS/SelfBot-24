@@ -36,13 +36,13 @@ jobs:
       - name: Set image tag
         run: |
           if [[ $GITHUB_REF_NAME == "main" ]]; then
-            echo "TAG=selfbot-24:latest" >> $GITHUB_ENV
+            echo "TAG=ghcr.io/${{ github.repository }}/selfbot-24:latest" >> $GITHUB_ENV
           else
-            echo "TAG=selfbot-24:$GITHUB_REF_NAME" >> $GITHUB_ENV
+            echo "TAG=ghcr.io/${{ github.repository }}/selfbot-24:$GITHUB_REF_NAME" >> $GITHUB_ENV
           fi
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
         with:
           context: .
-          push: true
+          push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ env.TAG }} 
