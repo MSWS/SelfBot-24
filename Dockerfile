@@ -12,4 +12,4 @@ COPY src ./
 RUN npm install
 
 # 6. Specify the command to start your application
-CMD [ "node", "src/bot.js" ] 
+CMD [ "node", "bot.js" ] 
