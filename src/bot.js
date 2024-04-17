@@ -26,7 +26,7 @@ client.on("messageCreate", async message => {
         return;
 
     if (message.content.startsWith(":ed ")) {
-        processEdmundMessage(messsage);
+        processEdmundMessage(message);
         return;
     } else if (message.content.startsWith(":pro ")) {
         processProMessage(message);
