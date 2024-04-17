@@ -72,9 +72,9 @@ function getSuffix(str) {
     if (str.includes("on") || str.includes("next"))
         return "D"
     if (str.includes("at"))
-        return "t"
+        return "f"
 
-    return "D"
+    return "f"
 }
 
 function getTime(str) {
