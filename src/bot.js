@@ -39,10 +39,10 @@ client.on("messageCreate", async message => {
         return;
     }
 
+    processCodeBlockMesesage(message);
     processTimeMessage(message);
 });
 
-const re = /\bms\b/;
 const timeRegex = /<.+>/;
 
 async function processTimeMessage(message) {
@@ -59,6 +59,38 @@ async function processTimeMessage(message) {
     });
 
     message.edit(replaced);
+}
+
+const codeBlockRegex = /```(.|\n)+```/;
+
+async function processCodeBlockMesesage(message) {
+    const content = message.content;
+    if (!codeBlockRegex.test(content))
+        return;
+
+    const replaced = message.content.replace(codeBlockRegex, (match) => {
+        return stripCommonWhitespace(match);
+    });
+
+    message.edit(replaced);
+}
+
+function stripCommonWhitespace(text) {
+    const header = text.split("\n")[0];
+    let code = text.split("\n").slice(1, -1);
+
+    let maxWhite = Infinity;
+
+    for (const line of code) {
+        const white = line.search(/\S/);
+        if (white == -1)
+            continue;
+        if (white < maxWhite)
+            maxWhite = white;
+    }
+
+    code = code.map(line => line.substring(maxWhite));
+    return header + "\n" + code.join("\n") + "\n```";
 }
 
 function getSuffix(str) {
@@ -121,8 +153,10 @@ async function processGenericMessage(prefix, prompt, message, system = false) {
     message.channel.send(response);
 }
 
+const msRegex = /\bms\b/;
+
 function processEgoMessage(message) {
-    if (!re.test(message.content.toLowerCase()))
+    if (!msRegex.test(message.content.toLowerCase()))
         return;
     message.react('👀')
 }
