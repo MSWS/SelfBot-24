@@ -1,11 +1,7 @@
 # 1. Choose a lightweight Node.js base image 
 FROM node:lts-alpine
 
-RUN apt-get update && apt-get install --no-install-recommends -y \
-    texlive-full \
-    && apt-get clean \
-    && apt-get autoremove -y \
-    && rm -rf /var/lib/apt/lists/*
+RUN apk add texlive-full
 
 # 2. Create a working directory inside the container
 WORKDIR /app
