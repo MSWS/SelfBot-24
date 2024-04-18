@@ -5,11 +5,12 @@ FROM node:lts-alpine
 WORKDIR /app
 
 # 3. Copy your application code
-COPY package.json package-lock.json ./
-COPY src ./
+COPY package.json package-lock.json tsconfig.json ./
+COPY src src
 
 # 4. Install dependencies
 RUN npm install
+RUN npm run build
 
 # 6. Specify the command to start your application
-CMD [ "node", "bot.js" ] 
+CMD [ "npm", "run", "start"]

@@ -2,7 +2,8 @@ import 'dotenv/config'
 import OpenAI from 'openai';
 import * as chrono from 'chrono-node';
 
-import { Client, Message } from 'discord.js-selfbot-v13';
+import { Client, Message, TextChannel } from 'discord.js-selfbot-v13';
+import { generateWebhookMessage, sendWebhook } from './webhook';
 const client = new Client();
 
 const openai = new OpenAI({
@@ -12,8 +13,8 @@ const openai = new OpenAI({
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
 
 client.on('ready', async () => {
-    console.log(`${client.user.username} is ready!`);
-    client.user.setPresence({
+    console.log(`${client.user!.username} is ready!`);
+    client.user!.setPresence({
         afk: true
     })
 })
@@ -22,10 +23,10 @@ client.on("messageCreate", async message => {
     if (message.guildId === "161245089774043136")
         processEgoMessage(message);
 
-    if (message.mentions.has(client.user.id))
+    if (message.mentions.has(client.user!.id))
         message.react('<:pingsock:1065009948452474930>');
 
-    if (message.author.id != client.user.id)
+    if (message.author.id != client.user!.id)
         return;
 
     if (message.content.startsWith(":ed ")) {
@@ -43,9 +44,65 @@ client.on("messageCreate", async message => {
     processTimeMessage(message);
 });
 
+client.on("messageUpdate", async (oldMessage, newMessage) => {
+    if (!oldMessage.author)
+        return;
+    if (oldMessage.author?.id == client.user!.id)
+        return;
+    if (oldMessage.author?.bot || oldMessage.author.system)
+        return;
+    if (oldMessage.content == newMessage.content)
+        return;
+    if (oldMessage.content == null)
+        return;
+    const channel = oldMessage.channel as TextChannel;
+
+    const webhookData = {
+        "username": (oldMessage.guild?.name ?? oldMessage.author.username) + (" > #" + (channel.name ?? "DMs")),
+        "embeds": [
+            {
+                "author": {
+                    "name": oldMessage.author.username,
+                    "icon_url": oldMessage.author.displayAvatarURL() ?? oldMessage.author.defaultAvatarURL,
+                },
+                "description": `\`\`\`${oldMessage.content}\`\`\`\n\`\`\`${newMessage.content}\`\`\`\n${newMessage.url}`,
+                "color": 0x0000FF,
+            }
+        ]
+    }
+
+    await sendWebhook(process.env.WEBHOOK_URL!, webhookData);
+});
+
+client.on("messageDelete", async message => {
+    if (message.author?.id == client.user!.id)
+        return;
+    if (!message.author)
+        return;
+    if (message.author?.bot)
+        return;
+
+    const channel = message.channel as TextChannel;
+
+    const webhookData = {
+        "username": (message.guild?.name ?? message.author.username) + (" > #" + (channel.name ?? "DMs")),
+        "embeds": [
+            {
+                "author": {
+                    "name": message.author.username,
+                    "icon_url": message.author.displayAvatarURL() ?? message.author.defaultAvatarURL,
+                },
+                "description": `\`\`\`${message.content}\`\`\`\n${message.url}`,
+                "color": 0xFF0000,
+            }
+        ]
+    }
+    await sendWebhook(process.env.WEBHOOK_URL!, webhookData);
+});
+
 const timeRegex = /<.+>/;
 
-async function processTimeMessage(message) {
+async function processTimeMessage(message: Message) {
     const content = message.content;
     if (!timeRegex.test(content))
         return;
@@ -58,12 +115,15 @@ async function processTimeMessage(message) {
         return `<t:${Math.floor(time.getTime() / 1000)}:${suffix}>`
     });
 
+    if (replaced == content)
+        return;
+
     message.edit(replaced);
 }
 
 const codeBlockRegex = /```(.|\n)+```/;
 
-async function processCodeBlockMesesage(message) {
+async function processCodeBlockMesesage(message: Message) {
     const content = message.content;
     if (!codeBlockRegex.test(content))
         return;
@@ -75,7 +135,7 @@ async function processCodeBlockMesesage(message) {
     message.edit(replaced);
 }
 
-function stripCommonWhitespace(text) {
+function stripCommonWhitespace(text: string) {
     const header = text.split("\n")[0];
     let code = text.split("\n").slice(1, -1);
 
@@ -93,7 +153,7 @@ function stripCommonWhitespace(text) {
     return header + "\n" + code.join("\n") + "\n```";
 }
 
-function getSuffix(str) {
+function getSuffix(str: string) {
     str = str.toLowerCase().substring(1);
     if (str.startsWith("in"))
         return "R"
@@ -112,27 +172,28 @@ function getSuffix(str) {
     return "f"
 }
 
-function getTime(str) {
+function getTime(str: string) {
     return chrono.parseDate(str, { timezone: "PDT" });
 }
 
-async function processEdmundMessage(message) {
+async function processEdmundMessage(message: Message<boolean>) {
     const prompt = "Rewrite the following into a sentence in the style of a person who feels deeply envious but tries to mask it with false enthusiasm. Use overly flowery language, a hint of sarcasm, and small focus on their own perceived misfortune.";
     processGenericMessage(":ed", prompt, message);
 }
 
-async function processProMessage(message) {
+async function processProMessage(message: Message<boolean>) {
     const prompt = "Rewrite the following into a professional sentence that is concise and to the point. Use formal language and avoid contractions.";
     processGenericMessage(":pro", prompt, message);
 }
 
-async function processQuestion(message) {
+async function processQuestion(message: Message<boolean>) {
     const prompt = "You are a helpful AI assistant. Answer the following question in a concise and informative manner. Use formal language and provide supplementary information if possible.";
     processGenericMessage(":?", prompt, message);
 }
 
-async function processGenericMessage(prefix, prompt, message, system = false) {
+async function processGenericMessage(prefix: string, prompt: string, message: Message<boolean>, system = false) {
     const msg = message.content.substring(prefix.length + 1)
+    const quotingMessage = await message.fetchReference();
     message.delete();
     message.channel.sendTyping();
 
@@ -149,13 +210,17 @@ async function processGenericMessage(prefix, prompt, message, system = false) {
         model: 'gpt-3.5-turbo'
     });
     const response = chatCompletion.choices[0].message;
+
+    if (quotingMessage)
+        quotingMessage.reply(response);
+    else
+        message.channel.send(response);
     console.log(response);
-    message.channel.send(response);
 }
 
 const msRegex = /\bms\b/;
 
-function processEgoMessage(message) {
+function processEgoMessage(message: Message<boolean>) {
     if (!msRegex.test(message.content.toLowerCase()))
         return;
     message.react('👀')
