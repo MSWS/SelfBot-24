@@ -193,7 +193,7 @@ async function processQuestion(message: Message<boolean>) {
 
 async function processGenericMessage(prefix: string, prompt: string, message: Message<boolean>, system = false) {
     const msg = message.content.substring(prefix.length + 1)
-    const quotingMessage = await message.fetchReference();
+    const quotingMessage = message.reference ? await message.fetchReference() : null;
     message.delete();
     message.channel.sendTyping();
 
