@@ -15,6 +15,7 @@ const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
 client.on('ready', async () => {
     console.log(`${client.user!.username} is ready!`);
     client.user!.setPresence({
+        status: 'invisible',
         afk: true
     })
 })
