@@ -24,9 +24,11 @@ client.on("messageCreate", async message => {
   if (message.guildId === "161245089774043136")
     processEgoMessage(message);
 
-  if (!(await message.guild?.members.fetchMe())?.nickname)
-    if (message.mentions.has(client.user!.id))
-      message.react('<:pingsock:1065009948452474930>');
+  if (message.mentions.has(client.user!.id)) {
+    const nickName = await message.guild?.members.fetchMe().then(me => me.nickname);
+    if (!nickName || nickName === client.user!.displayName)
+      await message.react('<:pingsock:1065009948452474930>');
+  }
 
   if (message.author.id != client.user!.id)
     return;
