@@ -109,7 +109,7 @@ client.on("messageDelete", async message => {
   await sendWebhook(process.env.WEBHOOK_URL!, webhookData);
 });
 
-const timeRegex = /<.+>/;
+const timeRegex = /<[^@]+>/;
 
 async function processTimeMessage(message: Message) {
   const content = message.content;
