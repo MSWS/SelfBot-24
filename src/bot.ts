@@ -204,7 +204,7 @@ function getTime(str: string) {
     // Automatically use local timezone
     const ref = {
       instant: new Date(),
-      timezone: new Date().getTimezoneOffset()
+      timezone: -new Date().getTimezoneOffset()
     };
     return chrono.parseDate(str, ref);
 }
