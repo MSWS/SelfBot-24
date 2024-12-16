@@ -201,9 +201,10 @@ function getSuffix(str: string) {
 }
 
 function getTime(str: string) {
+    // Automatically use local timezone
     const ref = {
       instant: new Date(),
-      timezone: moment.tz.guess()
+      timezone: new Date().getTimezoneOffset()
     };
     return chrono.parseDate(str, ref);
 }
