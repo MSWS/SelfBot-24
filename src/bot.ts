@@ -198,7 +198,7 @@ function getSuffix(str: string) {
 }
 
 function getTime(str: string) {
-    return chrono.parseDate(str, { timezone: "PDT" });
+    return chrono.parseDate(str);
 }
 
 async function processQuestion(message: Message<boolean>) {
