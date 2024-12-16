@@ -144,7 +144,6 @@ async function processTimeMessage(message: Message) {
     if (replaced == content)
         return;
 
-    // message.edit(replaced);
     message.content = replaced;
 }
 
@@ -159,7 +158,6 @@ async function processCodeBlockMesesage(message: Message) {
         return stripCommonWhitespace(match);
     });
 
-    // message.edit(replaced);
     message.content = replaced;
 }
 
@@ -204,7 +202,7 @@ function getTime(str: string) {
     // Automatically use local timezone
     const ref = {
       instant: new Date(),
-      timezone: -new Date().getTimezoneOffset()
+      timezone: new Date().getTimezoneOffset()
     };
     return chrono.parseDate(str, ref);
 }
