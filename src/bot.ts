@@ -199,8 +199,8 @@ function getSuffix(str: string) {
 
 function getTime(str: string) {
     const ref = {
-      instant: new Date(), // Use the current date as a reference
-      timezone: "America/Los_Angeles" // Get system's native timezone
+      instant: new Date(),
+      timezone: "PT"
     };
     return chrono.parseDate(str, ref);
 }
