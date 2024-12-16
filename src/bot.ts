@@ -200,7 +200,7 @@ function getSuffix(str: string) {
 function getTime(str: string) {
     const ref = {
       instant: new Date(), // Use the current date as a reference
-      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone // Get system's native timezone
+      timezone: "America/Los_Angeles" // Get system's native timezone
     };
     return chrono.parseDate(str, ref);
 }
