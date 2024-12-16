@@ -199,12 +199,7 @@ function getSuffix(str: string) {
 }
 
 function getTime(str: string) {
-    // Automatically use local timezone
-    const ref = {
-      instant: new Date(),
-      // timezone: new Date().getTimezoneOffset()
-    };
-    return chrono.parseDate(str, ref);
+    return chrono.parseDate(str, new Date());
 }
 
 async function processQuestion(message: Message<boolean>) {
