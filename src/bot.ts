@@ -203,7 +203,7 @@ function getSuffix(str: string) {
 function getTime(str: string) {
     const ref = {
       instant: new Date(),
-      timezone: moment.tz("America/Los_Angeles").format("Z")
+      timezone: moment.tz.guess()
     };
     return chrono.parseDate(str, ref);
 }
