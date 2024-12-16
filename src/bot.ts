@@ -198,8 +198,11 @@ function getSuffix(str: string) {
 }
 
 function getTime(str: string) {
-    const options = { timezone: Intl.DateTimeFormat().resolvedOptions().timeZone };
-    return chrono.parseDate(str, new Date(), options);
+    const ref = {
+      instant: new Date(), // Use the current date as a reference
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone // Get system's native timezone
+    };
+    return chrono.parseDate(str, ref);
 }
 
 async function processQuestion(message: Message<boolean>) {
