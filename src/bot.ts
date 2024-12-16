@@ -4,6 +4,9 @@ import * as chrono from 'chrono-node';
 
 import { Client, Message, TextChannel } from 'discord.js-selfbot-v13';
 import { sendWebhook } from './webhook';
+import moment from 'moment';
+import 'moment-timezone';
+
 const client = new Client();
 
 const openai = new OpenAI({
@@ -200,7 +203,7 @@ function getSuffix(str: string) {
 function getTime(str: string) {
     const ref = {
       instant: new Date(),
-      timezone: "PT"
+      timezone: moment.tz(moment.tz.guess()).format("z")
     };
     return chrono.parseDate(str, ref);
 }
