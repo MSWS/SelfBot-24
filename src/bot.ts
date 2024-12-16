@@ -198,7 +198,8 @@ function getSuffix(str: string) {
 }
 
 function getTime(str: string) {
-    return chrono.parseDate(str);
+    const options = { timezone: Intl.DateTimeFormat().resolvedOptions().timeZone };
+    return chrono.parseDate(str, new Date(), options);
 }
 
 async function processQuestion(message: Message<boolean>) {
