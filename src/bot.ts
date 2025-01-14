@@ -67,6 +67,8 @@ client.on("messageReactionAdd", async (reaction, user) => {
     return;
   if (reaction.message.channelId !== "1326295749952016395")
     return;
+  if (reaction.emoji.name != "✅" && reaction.emoji.name != "☑")
+    return;
 
   const message = await reaction.message.fetch();
   const number = addBits(message.content);
