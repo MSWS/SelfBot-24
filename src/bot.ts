@@ -265,6 +265,10 @@ const msRegex = /\bms\b/;
 function processEgoMessage(message: Message<boolean>) {
   if (!msRegex.test(message.content.toLowerCase()))
     return;
+  if (message.channel instanceof TextChannel) {
+    if (message.channel.parentId == "1328406220507447377")
+      return;
+  }
   message.react('👀')
 }
 
