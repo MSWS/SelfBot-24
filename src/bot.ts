@@ -63,7 +63,7 @@ client.on("messageCreate", async message => {
 });
 
 client.on("messageReactionAdd", async (reaction, user) => {
-  if (!user.bot || user.id == client.user!.id)
+  if (!user.bot || user.id == client.user!.id || reaction.message.author?.id == client.user!.id)
     return;
   if (reaction.message.channelId !== "1326295749952016395")
     return;
