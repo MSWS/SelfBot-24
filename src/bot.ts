@@ -41,8 +41,10 @@ client.on("messageCreate", async message => {
     if (!nickName || nickName === client.user!.displayName) {
       await message.react('<:pingsock:1065009948452474930>');
       pingTimes = pingTimes.filter(ping => ping > Date.now() - 1000 * 60 * 60 * 24);
-      if (message.guildId === "161245089774043136" && message.author.id !== client.user!.id)
-        await message.reply(`I have been pinged ${pingTimes.length} time${(pingTimes.length == 1 ? "" : "s")} in the last 24 hours.`);
+      if (pingTimes.length <= 1 || pingTimes[pingTimes.length - 2] < Date.now() - 1000 * 60 * 3) {
+        if (message.guildId === "161245089774043136" && message.author.id !== client.user!.id)
+          await message.reply(`I have been pinged ${pingTimes.length} time${(pingTimes.length == 1 ? "" : "s")} in the last 24 hours.`);
+      }
     }
   }
 
