@@ -29,14 +29,20 @@ client.on('ready', async () => {
   })
 })
 
+let pingTimes: number[] = [];
+
 client.on("messageCreate", async message => {
   if (message.guildId === "161245089774043136")
     processEgoMessage(message);
 
   if (message.mentions.has(client.user!.id)) {
     const nickName = await message.guild?.members.fetchMe().then(me => me.nickname);
-    if (!nickName || nickName === client.user!.displayName)
+    pingTimes.push(Date.now());
+    if (!nickName || nickName === client.user!.displayName) {
       await message.react('<:pingsock:1065009948452474930>');
+      let pingsToDate = pingTimes.filter(ping => ping > Date.now() - 1000 * 60 * 60 * 24).length;
+      await message.reply(`I have been pinged ${pingsToDate} time${(pingsToDate == 1 ? "" : "")} in the last 24 hours.`);
+    }
   }
 
   if (message.author.id != client.user!.id)
