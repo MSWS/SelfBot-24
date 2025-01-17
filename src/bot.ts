@@ -72,13 +72,13 @@ client.on("messageCreate", async message => {
 });
 
 function generateExpression(target: number): string {
-  const operations = ['+', '-', '*', '/'];
-  const numOperations = Math.floor(Math.random() * 3) + 2; // Between 2 and 4 operations
+  const operations = ['+', '-', '*', '^', '%'];
+  const numOperations = Math.floor(Math.random() * 8) + 4; // Between 2 and 4 operations
   let expression = `${Math.floor(Math.random() * 10)}`; // Start with a random number between 0 and 9
 
   for (let i = 0; i < numOperations; i++) {
     const operation = operations[Math.floor(Math.random() * operations.length)];
-    const nextNum = Math.floor(Math.random() * 10); // Next random number between 0 and 9
+    const nextNum = Math.floor(Math.random() * 20) + 1; // Next random number between 1 and 9
     expression += `${operation}${nextNum}`;
   }
 
