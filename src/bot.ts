@@ -79,7 +79,7 @@ function generateExpression(target: number): string {
   for (let i = 0; i < numOperations; i++) {
     const operation = operations[Math.floor(Math.random() * operations.length)];
     const nextNum = Math.floor(Math.random() * 10); // Next random number between 0 and 9
-    expression += ` ${operation} ${nextNum}`;
+    expression += `${operation}${nextNum}`;
   }
 
   // Evaluate the expression and adjust it to match the target number if necessary
@@ -87,7 +87,7 @@ function generateExpression(target: number): string {
   const diff = target - evaluated;
 
   if (diff !== 0) {
-    expression += ` + ${diff}`;
+    expression += `+${diff}`;
   }
 
   return expression;
