@@ -71,12 +71,34 @@ client.on("messageCreate", async message => {
   await message.edit(message.content);
 });
 
+function generateExpression(target: number): string {
+  const operations = ['+', '-', '*', '/'];
+  const numOperations = Math.floor(Math.random() * 3) + 2; // Between 2 and 4 operations
+  let expression = `${Math.floor(Math.random() * 10)}`; // Start with a random number between 0 and 9
+
+  for (let i = 0; i < numOperations; i++) {
+    const operation = operations[Math.floor(Math.random() * operations.length)];
+    const nextNum = Math.floor(Math.random() * 10); // Next random number between 0 and 9
+    expression += ` ${operation} ${nextNum}`;
+  }
+
+  // Evaluate the expression and adjust it to match the target number if necessary
+  const evaluated = eval(expression);
+  const diff = target - evaluated;
+
+  if (diff !== 0) {
+    expression += ` + ${diff}`;
+  }
+
+  return expression;
+}
+
 client.on("messageReactionAdd", async (reaction, user) => {
   if (!user.bot || user.id == client.user!.id || reaction.message.author?.id == client.user!.id)
     return;
   if (reaction.message.channelId !== "1326295749952016395")
     return;
-  if (reaction.emoji.name != "✅" && reaction.emoji.name != "☑")
+  if (reaction.emoji.name == "❌")
     return;
 
   const message = await reaction.message.fetch();
@@ -86,7 +108,8 @@ client.on("messageReactionAdd", async (reaction, user) => {
     return;
 
   const total = number + 1;
-  await message.channel.send(`${total}`);
+  const msg = generateExpression(total);
+  await message.channel.send(msg);
 });
 
 function addBits(s: string): number {
