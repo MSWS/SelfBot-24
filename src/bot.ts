@@ -2,10 +2,10 @@ import 'dotenv/config'
 import OpenAI from 'openai';
 import * as chrono from 'chrono-node';
 
-import { Client, Message, TextChannel } from 'discord.js-selfbot-v13';
+import { ButtonInteraction, Client, Message, MessageButton, MessageEmbed, PartialMessage, TextChannel } from 'discord.js-selfbot-v13';
 import { sendWebhook } from './webhook';
-import moment from 'moment';
 import 'moment-timezone';
+// let balance = 0;
 
 const client = new Client();
 
@@ -82,6 +82,87 @@ function generateExpression(target: number): string {
   }
 
   return expression;
+}
+
+client.on("messageCreate", async (message: Message) => {
+  handleBJEmbed(message);
+
+  if (message.author == null || message.author.id != "1323821839683813456")
+    return
+  if (message.embeds.length != 1)
+    return
+  if (message.embeds[0].description?.toLowerCase().includes("you"))
+    await message.channel.sendSlash("1323821839683813456", "blackjack", "50")
+})
+
+client.on("messageUpdate", async (oldMessage, message) => {
+  handleBJEmbed(message);
+
+  if (message.author == null || message.author.id != "1323821839683813456")
+    return
+  if (message.embeds.length != 1)
+    return
+  if (message.embeds[0].description?.toLowerCase().includes("you"))
+    await message.channel.sendSlash("1323821839683813456", "blackjack", "50")
+})
+
+function isBJ(message: Message | PartialMessage) {
+  if (message.author == null || message.author.id != "1323821839683813456")
+    return false;
+  if (message.components.length != 1)
+    return false;
+  let row = message.components[0];
+  if (row.components.length != 2)
+    return false
+  if (message.embeds.length != 1)
+    return false
+  return true;
+}
+
+async function handleBJEmbed(message: Message<boolean> | PartialMessage) {
+  if (!isBJ(message))
+    return;
+  const embed = message.embeds[0];
+  const myHandStr = embed.fields[0].value.split(" ")[1];
+  const myHand = parseInt(myHandStr.substring(1, myHandStr.length - 1));
+  const dealerHandStr = embed.fields[1].value.split(" ")[1];
+  const dealerHand = parseInt(dealerHandStr.substring(1, dealerHandStr.length - 1));
+  const soft = myHandStr.includes("A");
+  console.log(message.content)
+  console.log(message.embeds[0])
+  const deciscion = getAction(myHand, dealerHand, soft);
+  const msg = await message.fetch();
+  await msg.clickButton({ X: deciscion ? 0 : 1, Y: 0 });
+}
+
+// True = hit, False = stand
+function getAction(total: number, dealer: number, soft: boolean): boolean {
+  if (soft) {
+    switch (total) {
+      case 19:
+      case 20:
+        return false
+      case 18:
+        return dealer >= 9
+      default:
+        return true
+    }
+  }
+
+  if (total >= 17)
+    return false
+
+  switch (total) {
+    case 16:
+    case 15:
+    case 14:
+    case 13:
+      return dealer >= 7
+    case 12:
+      return dealer == 2 || dealer == 3 || dealer >= 7
+    default:
+      return true
+  }
 }
 
 // client.on("messageReactionAdd", async (reaction, user) => {
