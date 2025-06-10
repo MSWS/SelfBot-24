@@ -165,24 +165,24 @@ function getAction(total: number, dealer: number, soft: boolean): boolean {
   }
 }
 
-// client.on("messageReactionAdd", async (reaction, user) => {
-//   if (!user.bot || user.id == client.user!.id || reaction.message.author?.id == client.user!.id)
-//     return;
-//   if (reaction.message.channelId !== "1326295749952016395")
-//     return;
-//   if (reaction.emoji.name == "❌")
-//     return;
+client.on("messageReactionAdd", async (reaction, user) => {
+  if (!user.bot || user.id == client.user!.id || reaction.message.author?.id == client.user!.id)
+    return;
+  if (reaction.message.channelId !== "1326295749952016395")
+    return;
+  if (reaction.emoji.name == "❌")
+    return;
 
-//   const message = await reaction.message.fetch();
-//   const number = addBits(message.content);
+  const message = await reaction.message.fetch();
+  const number = addBits(message.content);
 
-//   if (isNaN(number))
-//     return;
+  if (isNaN(number))
+    return;
 
-//   const total = number + 1;
-//   const msg = generateExpression(total);
-//   await message.channel.send(msg);
-// });
+  const total = number + 1;
+  const msg = generateExpression(total);
+  await message.channel.send(msg);
+});
 
 function addBits(s: string): number {
   let total = 0;
