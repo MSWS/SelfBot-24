@@ -166,12 +166,16 @@ function getAction(total: number, dealer: number, soft: boolean): boolean {
 }
 
 client.on("messageReactionAdd", async (reaction, user) => {
+  console.log("Reaction added", reaction.emoji.name, user.id);
   if (!user.bot || user.id == client.user!.id || reaction.message.author?.id == client.user!.id)
     return;
-  if (reaction.message.channelId !== "1326295749952016395")
+  console.log("Is proper user");
+  if (reaction.message.channelId !== "1379353138988974170")
     return;
+  console.log("Is proper channel");
   if (reaction.emoji.name == "❌")
     return;
+  console.log("Is not a delete reaction");
 
   const message = await reaction.message.fetch();
   const number = addBits(message.content);
