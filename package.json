@@ -10,6 +10,7 @@
     "pdflatex": "^0.0.1"
   },
   "devDependencies": {
+    "@types/node": "^24.0.1",
     "typescript": "^5.4.5"
   },
   "scripts": {
