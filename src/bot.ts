@@ -42,10 +42,10 @@ client.on("messageCreate", async message => {
   if (message.author.id != client.user!.id)
     return;
 
-  if (message.content.startsWith(":? ")) {
-    processQuestion(message);
-    return;
-  }
+  // if (message.content.startsWith(":? ")) {
+  //   processQuestion(message);
+  //   return;
+  // }
 
   const oldContent = message.content;
 
