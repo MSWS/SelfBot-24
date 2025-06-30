@@ -194,61 +194,61 @@ function addBits(s: string): number {
   return total;
 }
 
-client.on("messageUpdate", async (oldMessage, newMessage) => {
-  if (!oldMessage.author)
-    return;
-  if (oldMessage.author?.id == client.user!.id)
-    return;
-  if (oldMessage.author?.bot || oldMessage.author.system)
-    return;
-  if (oldMessage.content == newMessage.content)
-    return;
-  if (oldMessage.content == null)
-    return;
-  const channel = oldMessage.channel as TextChannel;
-
-  const webhookData = {
-    "username": (oldMessage.guild?.name ?? oldMessage.author.username) + (" > #" + (channel.name ?? "DMs")),
-    "embeds": [
-      {
-        "author": {
-          "name": oldMessage.author.username,
-          "icon_url": oldMessage.author.displayAvatarURL() ?? oldMessage.author.defaultAvatarURL,
-        },
-        "description": `\`\`\`${oldMessage.content}\`\`\`\n\`\`\`${newMessage.content}\`\`\`\n${newMessage.url}`,
-        "color": 0x0000FF,
-      }
-    ]
-  }
-
-  await sendWebhook(process.env.WEBHOOK_URL!, webhookData);
-});
-
-client.on("messageDelete", async message => {
-  if (message.author?.id == client.user!.id)
-    return;
-  if (!message.author)
-    return;
-  if (message.author?.bot)
-    return;
-
-  const channel = message.channel as TextChannel;
-
-  const webhookData = {
-    "username": (message.guild?.name ?? message.author.username) + (" > #" + (channel.name ?? "DMs")),
-    "embeds": [
-      {
-        "author": {
-          "name": message.author.username,
-          "icon_url": message.author.displayAvatarURL() ?? message.author.defaultAvatarURL,
-        },
-        "description": `\`\`\`${message.content}\`\`\`\n${message.url}`,
-        "color": 0xFF0000,
-      }
-    ]
-  }
-  await sendWebhook(process.env.WEBHOOK_URL!, webhookData);
-});
+// client.on("messageUpdate", async (oldMessage, newMessage) => {
+//   if (!oldMessage.author)
+//     return;
+//   if (oldMessage.author?.id == client.user!.id)
+//     return;
+//   if (oldMessage.author?.bot || oldMessage.author.system)
+//     return;
+//   if (oldMessage.content == newMessage.content)
+//     return;
+//   if (oldMessage.content == null)
+//     return;
+//   const channel = oldMessage.channel as TextChannel;
+// 
+//   const webhookData = {
+//     "username": (oldMessage.guild?.name ?? oldMessage.author.username) + (" > #" + (channel.name ?? "DMs")),
+//     "embeds": [
+//       {
+//         "author": {
+//           "name": oldMessage.author.username,
+//           "icon_url": oldMessage.author.displayAvatarURL() ?? oldMessage.author.defaultAvatarURL,
+//         },
+//         "description": `\`\`\`${oldMessage.content}\`\`\`\n\`\`\`${newMessage.content}\`\`\`\n${newMessage.url}`,
+//         "color": 0x0000FF,
+//       }
+//     ]
+//   }
+// 
+//   await sendWebhook(process.env.WEBHOOK_URL!, webhookData);
+// });
+// 
+// client.on("messageDelete", async message => {
+//   if (message.author?.id == client.user!.id)
+//     return;
+//   if (!message.author)
+//     return;
+//   if (message.author?.bot)
+//     return;
+// 
+//   const channel = message.channel as TextChannel;
+// 
+//   const webhookData = {
+//     "username": (message.guild?.name ?? message.author.username) + (" > #" + (channel.name ?? "DMs")),
+//     "embeds": [
+//       {
+//         "author": {
+//           "name": message.author.username,
+//           "icon_url": message.author.displayAvatarURL() ?? message.author.defaultAvatarURL,
+//         },
+//         "description": `\`\`\`${message.content}\`\`\`\n${message.url}`,
+//         "color": 0xFF0000,
+//       }
+//     ]
+//   }
+//   await sendWebhook(process.env.WEBHOOK_URL!, webhookData);
+// });
 
 async function processReplacemenets(message: Message) {
   const content = message.content;
@@ -334,37 +334,37 @@ function getTime(str: string) {
   return chrono.parseDate(str, new Date());
 }
 
-async function processQuestion(message: Message<boolean>) {
-  const prompt = "You are a helpful AI assistant. Answer the following question in a concise and informative manner. Use formal language and provide supplementary information if possible.";
-  processGenericMessage(":?", prompt, message);
-}
-
-async function processGenericMessage(prefix: string, prompt: string, message: Message<boolean>, system = false) {
-  const msg = message.content.substring(prefix.length + 1)
-  const quotingMessage = message.reference ? await message.fetchReference() : null;
-  message.delete();
-  message.channel.sendTyping();
-
-  const chatCompletion = await openai.chat.completions.create({
-    messages: [
-      {
-        role: system ? 'system' : 'user',
-        content: prompt,
-      },
-      {
-        role: 'user',
-        content: msg
-      }],
-    model: 'gpt-3.5-turbo'
-  });
-  const response = chatCompletion.choices[0].message;
-
-  if (quotingMessage)
-    quotingMessage.reply(response);
-  else
-    message.channel.send(response);
-  console.log(response);
-}
+// async function processQuestion(message: Message<boolean>) {
+//   const prompt = "You are a helpful AI assistant. Answer the following question in a concise and informative manner. Use formal language and provide supplementary information if possible.";
+//   processGenericMessage(":?", prompt, message);
+// }
+// 
+// async function processGenericMessage(prefix: string, prompt: string, message: Message<boolean>, system = false) {
+//   const msg = message.content.substring(prefix.length + 1)
+//   const quotingMessage = message.reference ? await message.fetchReference() : null;
+//   message.delete();
+//   message.channel.sendTyping();
+// 
+//   const chatCompletion = await openai.chat.completions.create({
+//     messages: [
+//       {
+//         role: system ? 'system' : 'user',
+//         content: prompt,
+//       },
+//       {
+//         role: 'user',
+//         content: msg
+//       }],
+//     model: 'gpt-3.5-turbo'
+//   });
+//   const response = chatCompletion.choices[0].message;
+// 
+//   if (quotingMessage)
+//     quotingMessage.reply(response);
+//   else
+//     message.channel.send(response);
+//   console.log(response);
+// }
 
 const msRegex = /\bms\b/;
 
